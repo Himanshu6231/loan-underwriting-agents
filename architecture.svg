@@ -1,0 +1,21 @@
+<svg viewBox="0 0 760 460" xmlns="http://www.w3.org/2000/svg" font-family="Arial,sans-serif" font-size="14">
+<rect width="760" height="460" fill="#fff"/>
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#444"/></marker></defs>
+<text x="380" y="28" text-anchor="middle" font-size="18" font-weight="bold">Loan Underwriting - Manager-Worker Delegation</text>
+<rect x="30" y="50" width="160" height="44" rx="8" fill="#eef" stroke="#446"/><text x="110" y="77" text-anchor="middle">Application text</text>
+<rect x="260" y="50" width="240" height="60" rx="8" fill="#ffe9b3" stroke="#a70"/><text x="380" y="75" text-anchor="middle" font-weight="bold">Underwriting Manager</text><text x="380" y="96" text-anchor="middle" font-size="12">decide_rule | format_justification</text>
+<line x1="190" y1="72" x2="258" y2="72" stroke="#444" marker-end="url(#a)"/>
+<g fill="#dff3e3" stroke="#262">
+<rect x="20" y="170" width="165" height="70" rx="8"/><rect x="200" y="170" width="165" height="70" rx="8"/><rect x="385" y="170" width="165" height="70" rx="8"/><rect x="570" y="170" width="165" height="70" rx="8"/></g>
+<g text-anchor="middle"><text x="102" y="195" font-weight="bold">Document Agent</text><text x="102" y="215" font-size="11">extract_fields</text><text x="102" y="230" font-size="11">validate_income_present</text>
+<text x="282" y="195" font-weight="bold">EMI Agent</text><text x="282" y="215" font-size="11">compute_emi</text><text x="282" y="230" font-size="11">total_interest</text>
+<text x="467" y="195" font-weight="bold">Affordability Agent</text><text x="467" y="215" font-size="11">emi_to_income_ratio</text><text x="467" y="230" font-size="11">affordability_verdict</text>
+<text x="652" y="195" font-weight="bold">Credit-History Agent</text><text x="652" y="215" font-size="11">lookup_prior_records</text><text x="652" y="230" font-size="11">flag_red_flags</text></g>
+<g stroke="#444" fill="none" marker-end="url(#a)"><path d="M320 110 L102 168"/><path d="M350 110 L282 168"/><path d="M410 110 L467 168"/><path d="M440 110 L652 168"/></g>
+<text x="380" y="150" text-anchor="middle" font-size="12" fill="#555">delegates in order 1 to 4</text>
+<rect x="20" y="290" width="715" height="50" rx="8" fill="#e8eefc" stroke="#349"/><text x="377" y="312" text-anchor="middle" font-weight="bold">Shared ApplicantRecord (memory) - every agent reads and writes</text><text x="377" y="330" text-anchor="middle" font-size="12">fields, emi, ratio, credit flags, decision, trace</text>
+<rect x="20" y="365" width="340" height="44" rx="8" fill="#f3f3f3" stroke="#666"/><text x="190" y="392" text-anchor="middle">prior_records.json (credit memory store)</text>
+<rect x="395" y="365" width="340" height="44" rx="8" fill="#f3f3f3" stroke="#666"/><text x="565" y="392" text-anchor="middle">run_log.jsonl (append-only)</text>
+<path d="M400 230 L400 288" stroke="#444" marker-end="url(#a)"/>
+<text x="380" y="440" text-anchor="middle" font-size="12" fill="#a00">HALT: income missing -&gt; REFER (never assumed)</text>
+</svg>

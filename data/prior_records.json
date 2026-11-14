@@ -1,0 +1,5 @@
+{
+  "ravi kumar":   {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1},
+  "arjun mehta":  {"defaults": 1, "missed_payments_12m": 4, "active_loans": 2},
+  "sunita rao":   {"defaults": 0, "missed_payments_12m": 3, "active_loans": 2}
+}
