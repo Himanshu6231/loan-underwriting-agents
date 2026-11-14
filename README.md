@@ -25,7 +25,7 @@ Tools are called through `kernel.invoke(...)`. The trace shows `via: kernel` or 
 Missing income/amount/tenure -> **refer** (halts before any calculation). Prior default or over 40% -> **decline**. 2+ missed payments -> **refer**. Otherwise **sanction**. Interest rate defaults to 10.5% p.a. unless the text states one.
 
 ## LLM use (Groq via Semantic Kernel)
-Groq's OpenAI-compatible endpoint (`llama-3.3-70b-versatile`) is used for (1) filling fields the regex missed and (2) polishing the justification. All numbers and decisions come from tools. Without `GROQ_API_KEY`, the system runs fully offline.
+Groq's OpenAI-compatible endpoint (`openai/gpt-oss-120b`) is used for (1) filling fields the regex missed and (2) polishing the justification. All numbers and decisions come from tools. Without `GROQ_API_KEY`, the system runs fully offline.
 
 ## One honest failure handled
 An LLM can invent an income that is not in the application. The Document Agent accepts an LLM-extracted number only if its digits appear in the source text (`grounded()`). Otherwise it logs `llm_value_rejected`, leaves income empty, and the Manager refers the case instead of assuming. Limitation: regex extraction expects phrasing like "net monthly income Rs 60,000", and unusual wording gets referred, not guessed.

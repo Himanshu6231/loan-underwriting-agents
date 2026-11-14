@@ -2,7 +2,7 @@
 import os
 
 USE_LLM = bool(os.getenv("GROQ_API_KEY")) and os.getenv("USE_LLM", "1") == "1"
-MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 try:
     from semantic_kernel import Kernel
