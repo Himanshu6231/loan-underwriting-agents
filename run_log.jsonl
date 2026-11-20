@@ -374,3 +374,435 @@
 {"ts": 1794645529.726, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
 {"ts": 1794645529.726, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
 {"ts": 1794645529.783, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794647799.083, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794647799.086, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794647799.087, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794647799.087, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794647799.087, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794647799.087, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794647799.087, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794647799.087, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794647799.087, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794647799.087, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794647799.087, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794647799.088, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794647799.088, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794647799.088, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794647799.088, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794647799.197, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794647802.296, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794647802.297, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794647802.298, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794647802.298, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794647802.298, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794647802.298, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794647802.298, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794647802.298, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794647802.298, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794647802.298, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794647802.298, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794647802.299, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794647802.299, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794647802.299, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794647802.299, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794647802.358, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794647804.382, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794647804.383, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794647804.383, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794647804.436, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794647804.437, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794647804.437, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794647804.437, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794647804.487, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794648047.081, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794648047.084, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794648047.085, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794648047.085, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794648047.085, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794648047.085, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794648047.085, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794648047.085, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794648047.085, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794648047.085, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794648047.085, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794648047.086, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794648047.086, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794648047.086, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794648047.086, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794648047.187, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794648051.163, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794648051.164, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794648051.164, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794648051.164, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794648051.165, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794648051.165, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794648051.165, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794648051.165, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794648051.165, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794648051.165, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794648051.165, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794648051.165, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794648051.166, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794648051.166, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794648051.166, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794648051.231, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794648054.115, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794648054.115, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794648054.116, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794648054.186, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794648054.186, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794648054.186, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794648054.186, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794648054.241, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794649087.46, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794649087.461, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649087.463, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649087.463, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794649087.464, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794649087.464, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794649087.464, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794649087.464, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794649087.464, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794649087.465, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794649087.465, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794649087.465, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794649087.465, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794649087.466, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794649087.466, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794649087.466, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794649090.6, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794649090.6, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649090.601, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649090.601, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794649090.601, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794649090.601, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794649090.601, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794649090.601, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794649090.601, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794649090.602, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794649090.602, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794649090.602, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794649090.602, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794649090.602, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794649090.602, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794649090.602, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794649093.224, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794649093.225, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649093.225, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649093.226, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794649093.226, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794649093.226, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794649093.226, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794649093.226, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794649173.839, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794649173.84, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649173.843, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649173.843, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794649173.843, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794649173.843, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794649173.843, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794649173.843, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794649173.843, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794649173.844, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794649173.844, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794649173.845, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794649173.845, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794649173.845, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794649173.845, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794649173.845, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794649238.372, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794649238.375, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649238.375, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649238.375, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794649238.375, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794649238.375, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794649238.376, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794649238.376, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794649238.376, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794649338.149, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794649338.151, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649338.154, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649338.154, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794649338.154, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794649338.154, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794649338.154, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794649338.154, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794649338.154, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794649338.155, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794649338.155, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794649338.155, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794649338.155, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794649338.156, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794649338.156, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794649338.156, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794649340.734, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794649340.735, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649340.735, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649340.735, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794649340.736, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794649340.736, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794649340.736, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794649340.736, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794649340.736, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794649340.736, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794649340.736, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794649340.736, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794649340.736, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794649340.737, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794649340.737, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794649340.737, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794649343.618, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794649343.619, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794649343.619, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794649343.62, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794649343.62, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794649343.62, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794649343.62, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794649343.62, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794940034.091, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794940034.094, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794940034.096, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794940034.097, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794940034.097, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794940034.097, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794940034.097, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794940034.097, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794940034.097, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794940034.097, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794940034.097, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794940034.097, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794940034.098, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794940034.098, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794940034.098, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794940034.098, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794940039.376, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794940039.376, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794940039.377, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794940039.377, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794940039.377, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794940039.377, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794940039.378, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794940039.378, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794940039.378, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794940044.436, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794940044.436, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794940044.437, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794940044.437, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794940044.437, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794940044.437, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794940044.437, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794940044.437, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794942888.009, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794942888.012, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794942888.013, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794942888.013, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794942888.013, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794942888.013, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794942888.013, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794942888.013, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794942888.013, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794942888.013, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794942888.014, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794942888.014, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794942888.014, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794942888.014, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794942888.014, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794942888.014, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794942891.004, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794942891.005, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794942891.006, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794942891.006, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794942891.006, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794942891.006, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794942891.006, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794942891.006, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794942891.006, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794942891.006, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794942891.007, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794942891.007, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794942891.007, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794942891.007, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794942891.007, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794942891.007, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794942895.289, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794942895.289, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794942895.29, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794942895.29, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794942895.29, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794942895.29, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794942895.291, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794942895.291, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794943011.767, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794943011.769, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794943011.77, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794943011.77, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794943011.77, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794943011.77, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794943011.77, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794943011.77, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794943011.771, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794943011.771, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794943011.771, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794943011.771, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794943011.771, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794943011.771, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794943011.772, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794943011.772, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794943014.99, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794943014.99, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794943014.991, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794943014.991, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794943014.991, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794943014.991, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794943014.992, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794943014.992, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794943014.992, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794943020.137, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794943020.138, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794943020.138, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794943020.138, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794943020.139, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794943020.139, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794943020.139, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794943020.139, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1794983055.268, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1794983055.27, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794983055.273, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794983055.273, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794983055.274, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794983055.274, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1794983055.274, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1794983055.274, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794983055.274, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1794983055.274, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1794983055.274, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794983055.274, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1794983055.275, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1794983055.275, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1794983055.275, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1794983055.275, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1794983065.37, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1794983065.37, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794983065.371, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794983065.371, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1794983065.371, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1794983065.371, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1794983065.371, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1794983065.371, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1794983065.372, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1794983065.372, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1794983065.372, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1794983065.372, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1794983065.372, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1794983065.372, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1794983065.372, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1794983065.372, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1794983071.52, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1794983071.521, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1794983071.522, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1794983071.522, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1794983071.522, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1794983071.522, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1794983071.522, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1794983071.522, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1795090344.479, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1795090344.48, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1795090344.484, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1795090344.484, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1795090344.484, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1795090344.485, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1795090344.485, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1795090344.485, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1795090344.485, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1795090344.485, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1795090344.485, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1795090344.486, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1795090344.486, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1795090344.486, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1795090344.486, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1795090344.486, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1795090347.423, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1795090347.423, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1795090347.424, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1795090347.424, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1795090347.424, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1795090347.424, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1795090347.424, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1795090347.424, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1795090347.425, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1795090347.425, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1795090347.425, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1795090347.425, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1795090347.425, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1795090347.425, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1795090347.425, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1795090347.425, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1795090353.409, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1795090353.41, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1795090353.41, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1795090353.41, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1795090353.41, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1795090353.411, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1795090353.411, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1795090353.411, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
+{"ts": 1795090503.444, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 124}}
+{"ts": 1795090503.446, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1795090503.447, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months."}, "result": {"name": "Ravi Kumar", "income": 60000.0, "existing_emis": 5000.0, "amount": 500000.0, "tenure_months": 36, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1795090503.447, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 60000.0}, "result": true, "via": "kernel"}}
+{"ts": 1795090503.447, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1795090503.447, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 500000.0, "annual_rate": 10.5, "months": 36}, "result": 16251.22, "via": "kernel"}}
+{"ts": 1795090503.447, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 16251.22, "months": 36, "principal": 500000.0}, "result": 85043.92, "via": "kernel"}}
+{"ts": 1795090503.447, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1795090503.448, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 16251.22, "existing": 5000.0, "income": 60000.0}, "result": 0.3542, "via": "kernel"}}
+{"ts": 1795090503.448, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 0.3542, "limit": 0.4}, "result": true, "via": "kernel"}}
+{"ts": 1795090503.448, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1795090503.448, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Ravi Kumar"}, "result": {"found": true, "defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "via": "kernel"}}
+{"ts": 1795090503.448, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 1}, "result": [], "via": "kernel"}}
+{"ts": 1795090503.448, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": true, "defaults": 0, "missed": 0}, "result": {"decision": "sanction", "reasons": ["affordability passes and no credit red flags"]}, "via": "kernel"}}
+{"ts": 1795090503.448, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "sanction", "reasons": "affordability passes and no credit red flags", "emi": 16251.22, "ratio": 0.3542}, "result": "Decision: sanction. EMI Rs 16,251.22, total obligations at 35.4% of net income (limit 40%). Reason: affordability passes and no credit red flags.", "via": "kernel"}}
+{"ts": 1795090503.448, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "sanction"}}
+{"ts": 1795090506.199, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 125}}
+{"ts": 1795090506.199, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1795090506.2, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months."}, "result": {"name": "Neha Singh", "income": 30000.0, "existing_emis": 5000.0, "amount": 1000000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1795090506.2, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 30000.0}, "result": true, "via": "kernel"}}
+{"ts": 1795090506.2, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "EmiAgent"}}
+{"ts": 1795090506.2, "agent": "EmiAgent", "event": "tool:compute_emi", "data": {"args": {"principal": 1000000.0, "annual_rate": 10.5, "months": 24}, "result": 46376.04, "via": "kernel"}}
+{"ts": 1795090506.2, "agent": "EmiAgent", "event": "tool:total_interest", "data": {"args": {"emi": 46376.04, "months": 24, "principal": 1000000.0}, "result": 113024.96, "via": "kernel"}}
+{"ts": 1795090506.2, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "AffordabilityAgent"}}
+{"ts": 1795090506.2, "agent": "AffordabilityAgent", "event": "tool:emi_to_income_ratio", "data": {"args": {"emi": 46376.04, "existing": 5000.0, "income": 30000.0}, "result": 1.7125, "via": "kernel"}}
+{"ts": 1795090506.2, "agent": "AffordabilityAgent", "event": "tool:affordability_verdict", "data": {"args": {"ratio": 1.7125, "limit": 0.4}, "result": false, "via": "kernel"}}
+{"ts": 1795090506.2, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "CreditHistoryAgent"}}
+{"ts": 1795090506.201, "agent": "CreditHistoryAgent", "event": "tool:lookup_prior_records", "data": {"args": {"name": "Neha Singh"}, "result": {"found": false}, "via": "kernel"}}
+{"ts": 1795090506.201, "agent": "CreditHistoryAgent", "event": "tool:flag_red_flags", "data": {"args": {"defaults": 0, "missed_payments_12m": 0, "active_loans": 0}, "result": [], "via": "kernel"}}
+{"ts": 1795090506.201, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": true, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "decline", "reasons": ["obligations exceed 40% of net income"]}, "via": "kernel"}}
+{"ts": 1795090506.201, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "decline", "reasons": "obligations exceed 40% of net income", "emi": 46376.04, "ratio": 1.7125}, "result": "Decision: decline. EMI Rs 46,376.04, total obligations at 171.2% of net income (limit 40%). Reason: obligations exceed 40% of net income.", "via": "kernel"}}
+{"ts": 1795090506.201, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "decline"}}
+{"ts": 1795090508.489, "agent": "UnderwritingManager", "event": "received_application", "data": {"chars": 94}}
+{"ts": 1795090508.49, "agent": "UnderwritingManager", "event": "delegate", "data": {"to": "DocumentAgent"}}
+{"ts": 1795090508.49, "agent": "DocumentAgent", "event": "tool:extract_fields", "data": {"args": {"text": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months."}, "result": {"name": "Meera Shah", "income": null, "existing_emis": 3000.0, "amount": 300000.0, "tenure_months": 24, "annual_rate": null}, "via": "kernel"}}
+{"ts": 1795090508.49, "agent": "DocumentAgent", "event": "tool:validate_income_present", "data": {"args": {"income": 0.0}, "result": false, "via": "kernel"}}
+{"ts": 1795090508.491, "agent": "UnderwritingManager", "event": "halt", "data": {"missing": ["income"]}}
+{"ts": 1795090508.491, "agent": "UnderwritingManager", "event": "tool:decide_rule", "data": {"args": {"income_ok": false, "affordable": false, "defaults": 0, "missed": 0}, "result": {"decision": "refer", "reasons": ["required data missing (e.g. income) - not assumed, referred to human underwriter"]}, "via": "kernel"}}
+{"ts": 1795090508.491, "agent": "UnderwritingManager", "event": "tool:format_justification", "data": {"args": {"decision": "refer", "reasons": "required data missing (e.g. income) - not assumed, referred to human underwriter", "emi": 0.0, "ratio": 0.0}, "result": "Decision: refer. no EMI computed. Reason: required data missing (e.g. income) - not assumed, referred to human underwriter.", "via": "kernel"}}
+{"ts": 1795090508.491, "agent": "UnderwritingManager", "event": "final_decision", "data": {"decision": "refer"}}
