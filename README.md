@@ -16,13 +16,13 @@ The Underwriting Manager delegates to four worker agents in order and decides fr
 
 Tools are called through `kernel.invoke(...)`. The trace shows `via: kernel` or `via: direct` for each call.
 
-## Memory
-- **Shared applicant record** (`state.py`): all agents read and write it, and it carries the trace.
-- **Prior-record store** (`data/prior_records.json`): defaults, missed payments in 12 months, active loans.
-- **Run log** (`run_log.jsonl`): append-only, every event.
+## Memory (short-term, long-term, audit)
+- **Short-term - shared applicant record** (`state.py`): all agents read and write it during one application.
+- **Long-term - SQLite store** (`memory.py`, `data/memory.db`): persists across runs. Seeded from `data/prior_records.json` (defaults, missed payments, active loans). The Manager writes every decision back (`remember_decision`), and the Credit-History Agent recalls it next time, so a returning applicant's earlier outcomes (e.g. repeated declines) influence the new decision. `python memory.py show` lists stored applications; `python memory.py reset` clears them.
+- **Audit - run log** (`run_log.jsonl`): append-only, every event.
 
 ## Decision rules
-Missing income/amount/tenure -> **refer** (halts before any calculation). Prior default or over 40% -> **decline**. 2+ missed payments -> **refer**. Otherwise **sanction**. Interest rate defaults to 10.5% p.a. unless the text states one.
+Missing income/amount/tenure -> **refer** (halts before any calculation). Prior default or over 40% -> **decline**. 2+ missed payments -> **refer**. Declined 2+ times before (long-term memory) -> **refer**. Otherwise **sanction**. Interest rate defaults to 10.5% p.a. unless the text states one.
 
 ## LLM use (Groq via Semantic Kernel)
 Groq's OpenAI-compatible endpoint (`openai/gpt-oss-120b`) is used for (1) filling fields the regex missed and (2) polishing the justification. All numbers and decisions come from tools. Without `GROQ_API_KEY`, the system runs fully offline.

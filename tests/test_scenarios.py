@@ -1,5 +1,6 @@
 import asyncio, os, sys, tempfile
 os.environ["USE_LLM"] = "0"
+os.environ["MEMORY_DB"] = os.path.join(tempfile.mkdtemp(), "memory.db")
 os.environ["RUN_LOG"] = os.path.join(tempfile.mkdtemp(), "test_run_log.jsonl")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from agents.manager import UnderwritingManager
@@ -44,3 +45,22 @@ def test_run_log_is_append_only():
     before = sum(1 for _ in open(p))
     run("Applicant: Ravi Kumar. Net monthly income Rs 60,000. Requesting a loan of Rs 1,00,000 for 12 months.")
     assert sum(1 for _ in open(p)) > before
+
+
+def test_memory_persists_and_is_recalled():
+    from memory import get_profile
+    app = "Applicant: Asha Verma. Net monthly income Rs 60,000. Requesting a loan of Rs 1,00,000 for 12 months."
+    run(app)                                                                   # first time: nothing to recall
+    assert get_profile("Asha Verma")["past_applications"] == 1                # decision written back
+    r = run(app)                                                               # second time: recalled
+    assert any(e["event"] == "recalled_from_memory" for e in r.trace)
+    assert "Returning applicant" in r.justification
+    assert get_profile("Asha Verma")["past_applications"] == 2
+
+
+def test_repeat_declines_trigger_refer():
+    big = "Applicant: Kiran Patel. Net monthly income Rs 30,000. Requesting a loan of Rs 10,00,000 for 24 months."
+    assert run(big).decision == "decline" and run(big).decision == "decline"
+    small = "Applicant: Kiran Patel. Net monthly income Rs 30,000. Requesting a loan of Rs 50,000 for 12 months."
+    r = run(small)
+    assert r.affordable and r.decision == "refer" and "repeated_declines" in r.credit_flags
