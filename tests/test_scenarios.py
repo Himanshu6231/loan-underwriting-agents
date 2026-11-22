@@ -64,3 +64,35 @@ def test_repeat_declines_trigger_refer():
     small = "Applicant: Kiran Patel. Net monthly income Rs 30,000. Requesting a loan of Rs 50,000 for 12 months."
     r = run(small)
     assert r.affordable and r.decision == "refer" and "repeated_declines" in r.credit_flags
+
+
+def test_bank_comparison_is_ranked_and_recommended():
+    r = run("Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months.")
+    costs = [o["total_cost"] for o in r.options]
+    assert r.options and costs == sorted(costs)                       # ranked cheapest first
+    assert r.options[0]["bank"] in r.advisory and "Recommended" in r.advisory
+
+
+def test_ineligible_banks_explain_why():
+    r = run("Applicant: Arjun Mehta. Net monthly income Rs 90,000. Requesting a loan of Rs 2,00,000 for 24 months.")
+    assert r.options == [] and r.eligibility
+    assert all(e["reasons"] and "prior default" in e["reasons"][0] for e in r.eligibility)
+    assert "No bank is currently eligible" in r.advisory
+
+
+def test_loan_type_is_detected_and_banks_filtered():
+    r = run("Applicant: Priya Nair. Net monthly income Rs 1,00,000. Requesting a home loan of Rs 30,00,000 for 20 years.")
+    assert r.loan_type == "home" and r.tenure_months == 240 and r.options
+    from agents.eligibility_agent import list_banks
+    assert {e["bank"] for e in r.eligibility} == set(list_banks("home"))
+
+
+def test_counter_offer_passes_the_affordability_rule():
+    from agents.emi_agent import compute_emi
+    from agents.counter_offer_agent import min_tenure_months
+    r = run("Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months.")
+    amt = r.counter_offer["max_amount_at_requested_tenure"]
+    assert r.decision == "decline" and amt > 0
+    assert (compute_emi(amt, 10.5, 24) + 5000) / 30000 <= 0.40       # the suggested amount really passes
+    m = min_tenure_months(300000, 30000, 5000, 10.5, 84)
+    assert m and (compute_emi(300000, 10.5, m) + 5000) / 30000 <= 0.40 and (compute_emi(300000, 10.5, m - 1) + 5000) / 30000 > 0.40

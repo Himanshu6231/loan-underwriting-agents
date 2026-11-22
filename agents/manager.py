@@ -4,6 +4,10 @@ from agents.document_agent import DocumentAgent
 from agents.emi_agent import EmiAgent
 from agents.affordability_agent import AffordabilityAgent
 from agents.credit_agent import CreditAgent
+from agents.eligibility_agent import EligibilityAgent
+from agents.comparison_agent import ComparisonAgent
+from agents.advisor_agent import AdvisorAgent
+from agents.counter_offer_agent import CounterOfferAgent
 from llm import ask
 from memory import record_application
 from state import ApplicantRecord
@@ -58,6 +62,8 @@ class UnderwritingManager(BaseAgent):
         super().__init__(ManagerPlugin())
         self.document, self.emi = DocumentAgent(), EmiAgent()
         self.afford, self.credit = AffordabilityAgent(), CreditAgent()
+        self.eligibility, self.comparison = EligibilityAgent(), ComparisonAgent()
+        self.advisor, self.counter = AdvisorAgent(), CounterOfferAgent()
 
     async def delegate(self, rec, worker):
         rec.post(self.name, "delegate", {"to": worker.name})
@@ -97,5 +103,11 @@ class UnderwritingManager(BaseAgent):
         await self.tool(rec, "remember_decision", name=rec.name or "", amount=rec.amount or 0.0,
                         tenure_months=rec.tenure_months or 0, emi=rec.emi or 0.0,
                         decision=rec.decision, reasons="; ".join(rec.reasons))
+        if complete:                          # bank comparison + advisory + counter-offer
+            await self.delegate(rec, self.eligibility)
+            await self.delegate(rec, self.comparison)
+            await self.delegate(rec, self.advisor)
+            if not rec.affordable:
+                await self.delegate(rec, self.counter)
         rec.post(self.name, "final_decision", {"decision": rec.decision})
         return rec

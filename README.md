@@ -37,3 +37,14 @@ export GROQ_API_KEY=...        # optional
 python run_demo.py             # or open demo.ipynb
 pytest tests -q
 ```
+
+## Bank comparison and advisory (new)
+After the underwriting decision, four more agents help the applicant choose a loan:
+| Agent | Role | Tools |
+|---|---|---|
+| Eligibility Agent | Checks the applicant against each bank's criteria (min income, amount range, max tenure, EMI-to-income limit, credit band from memory) and explains every rejection | `list_banks`, `credit_band`, `check_eligibility` |
+| Comparison Agent | Prices each eligible bank (rate, EMI, processing fee, total cost) and ranks them | `price_option`, `rank_options` |
+| Advisor Agent | Loan-type advice and a recommendation built only from the ranked facts | `loan_type_advice`, `build_advisory` |
+| Counter-Offer Agent | If affordability fails: the largest amount that would pass, and the shortest tenure that would pass | `max_affordable_amount`, `min_tenure_months` |
+
+Loan types: personal, home, car, education (detected from the application text; default personal). **The bank catalog (`data/banks.json`) is illustrative sample data with fictional banks, not live rates.** Replace it with figures from official bank websites for real use.

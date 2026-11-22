@@ -16,6 +16,9 @@ def extract_fields(text: str) -> dict:
     if ten:
         months = int(ten.group(1)) * (12 if ten.group(2).lower().startswith("y") else 1)
     rate = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
+    lt = re.search(r"\b(personal|home|car|education|student)\s+loan", text, re.I)
+    loan_type = (lt.group(1).lower() if lt else "personal")
+    loan_type = "education" if loan_type == "student" else loan_type
     return {
         "name": name.group(1).strip() if name else None,
         "income": _n(re.search(r"income" + cur, text, re.I)),
@@ -23,6 +26,7 @@ def extract_fields(text: str) -> dict:
         "amount": _n(re.search(r"(?:loan|amount|requesting|requested)" + cur, text, re.I)),
         "tenure_months": months,
         "annual_rate": float(rate.group(1)) if rate else None,
+        "loan_type": loan_type,
     }
 
 
@@ -72,6 +76,7 @@ class DocumentAgent(BaseAgent):
                 except Exception as e:
                     rec.post(self.name, "llm_parse_failed", {"error": type(e).__name__})
         rec.name, rec.income = f["name"], f["income"]
+        rec.loan_type = f.get("loan_type", "personal")
         rec.existing_emis = f["existing_emis"] or 0.0
         rec.amount, rec.tenure_months = f["amount"], f["tenure_months"]
         if f["annual_rate"]:

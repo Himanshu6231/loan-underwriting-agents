@@ -6,6 +6,7 @@ CASES = {
  "sanction": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 5,00,000 for 36 months.",
  "decline (unaffordable)": "Applicant: Neha Singh. Net monthly income Rs 30,000. Existing EMIs Rs 5,000. Requesting a loan of Rs 10,00,000 for 24 months.",
  "returning applicant (long-term memory)": "Applicant: Ravi Kumar. Net monthly income Rs 60,000. Requesting a loan of Rs 1,00,000 for 12 months.",
+ "home loan comparison": "Applicant: Priya Nair. Net monthly income Rs 1,00,000. Requesting a home loan of Rs 30,00,000 for 20 years.",
  "refer (income missing)": "Applicant: Meera Shah. Existing EMIs Rs 3,000. Requesting a loan of Rs 3,00,000 for 24 months.",
 }
 
