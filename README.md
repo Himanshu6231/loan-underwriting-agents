@@ -1,4 +1,4 @@
-# Multi-Agent Loan Underwriting System (CSE476 Project 2, Q2)
+# Multi-Agent Loan Underwriting System
 
 Decides a loan application as **sanction / decline / refer**, with EMI, affordability verdict and a one-paragraph justification.
 
