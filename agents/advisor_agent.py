@@ -19,13 +19,15 @@ def loan_type_advice(loan_type: str, amount: float, income: float) -> str:
     return note
 
 
-def build_advisory(best_json: str, n_eligible: int, n_total: int, runner_up: str, top_reasons: str, advice: str, loan_type: str) -> str:
+def build_advisory(best_json: str, n_eligible: int, n_total: int, runner_up: str, top_reasons: str, advice: str, loan_type: str,
+                   caveats: str = "") -> str:
     if best_json and best_json != "{}":
         b = json.loads(best_json)
         second = f" Next best: {runner_up}." if runner_up else ""
+        note = f" Note: {caveats}." if caveats else ""
         return (f"Recommended: {b['bank']} {loan_type} loan at {b['rate']}% - EMI Rs {b['emi']:,.2f}, total cost Rs "
                 f"{b['total_cost']:,.2f} (includes processing fee Rs {b['processing_fee']:,.2f}). "
-                f"{n_eligible} of {n_total} banks are eligible.{second} {advice}").strip()
+                f"{n_eligible} of {n_total} banks are eligible.{second}{note} {advice}").strip()
     return f"No bank is currently eligible for this {loan_type} loan. Main reasons: {top_reasons}. {advice}".strip()
 
 
@@ -36,8 +38,8 @@ class AdvisorPlugin:
 
     @kernel_function(name="build_advisory", description="Fact-only advisory text")
     def build_advisory(self, best_json: str, n_eligible: int, n_total: int, runner_up: str,
-                       top_reasons: str, advice: str, loan_type: str) -> str:
-        return build_advisory(best_json, n_eligible, n_total, runner_up, top_reasons, advice, loan_type)
+                       top_reasons: str, advice: str, loan_type: str, caveats: str = "") -> str:
+        return build_advisory(best_json, n_eligible, n_total, runner_up, top_reasons, advice, loan_type, caveats)
 
 
 class AdvisorAgent(BaseAgent):
@@ -54,7 +56,7 @@ class AdvisorAgent(BaseAgent):
         runner = rec.options[1]["bank"] if len(rec.options) > 1 else ""
         text = await self.tool(rec, "build_advisory", best_json=json.dumps(best), n_eligible=len(rec.options),
                                n_total=len(rec.eligibility), runner_up=runner, top_reasons=top, advice=advice,
-                               loan_type=rec.loan_type)
+                               loan_type=rec.loan_type, caveats="; ".join(best.get("caveats", [])))
         polished = await ask("Rewrite as ONE short advisory paragraph for a loan applicant. Use ONLY the facts given; "
                              "do not add banks, numbers or claims.", text)
         rec.advisory = polished.strip() if polished else text

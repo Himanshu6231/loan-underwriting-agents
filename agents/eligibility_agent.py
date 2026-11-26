@@ -7,8 +7,21 @@ from agents.emi_agent import compute_emi
 CATALOG = os.path.join(os.path.dirname(__file__), "..", "data", "banks.json")
 
 
+REAL = os.path.join(os.path.dirname(__file__), "..", "data", "banks_real.json")
+
+
 def _catalog_path():
-    return os.getenv("BANK_CATALOG", CATALOG)
+    """BANK_CATALOG if set; else the verified real-bank catalog when it has products; else the fictional sample."""
+    env = os.getenv("BANK_CATALOG")
+    if env:
+        return env
+    try:
+        with open(REAL, encoding="utf-8") as f:
+            if json.load(f).get("products"):
+                return REAL
+    except Exception:
+        pass
+    return CATALOG
 
 
 def _products():
@@ -46,12 +59,12 @@ def check_eligibility(bank: str, loan_type: str, income: float, amount: float, t
     reasons = []
     if band == "blocked":
         reasons.append("prior default on record")
-    if income < p["min_income"]:
-        reasons.append(f"income below minimum Rs {p['min_income']:,}")
+    if p.get("min_income") and income < p["min_income"]:
+        reasons.append(f"income below minimum Rs {p['min_income']:,.0f}")
     lo, hi, cap = p.get("min_amount", 0), p.get("max_amount", 10**10), p.get("max_foir", 0.5)
     if not lo <= amount <= hi:
         reasons.append(f"amount outside Rs {lo:,.0f} - Rs {hi:,.0f}")
-    if tenure_months > p["max_tenure_months"]:
+    if p.get("max_tenure_months") and tenure_months > p["max_tenure_months"]:
         reasons.append(f"tenure above maximum {p['max_tenure_months']} months")
     rate = pick_rate(p, band)
     emi = foir = None
@@ -61,8 +74,8 @@ def check_eligibility(bank: str, loan_type: str, income: float, amount: float, t
         if foir > cap:
             reasons.append(f"EMI-to-income {foir:.0%} exceeds bank limit {cap:.0%}")
     return {"bank": bank, "eligible": not reasons, "reasons": reasons, "rate": rate, "emi": emi, "foir": foir,
-            "criteria": {"min_income": p["min_income"], "max_foir": cap,
-                         "max_tenure_months": p["max_tenure_months"]}}
+            "criteria": {"min_income": p.get("min_income"), "max_foir": cap,
+                         "max_tenure_months": p.get("max_tenure_months")}}
 
 
 class EligibilityPlugin:

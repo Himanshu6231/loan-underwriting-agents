@@ -55,11 +55,19 @@ class ComparisonAgent(BaseAgent):
         priced = []
         for e in rec.eligibility:
             if e["eligible"]:
-                priced.append(await self.tool(rec, "price_option", bank=e["bank"], rate=e["rate"], amount=rec.amount,
+                o = (await self.tool(rec, "price_option", bank=e["bank"], rate=e["rate"], amount=rec.amount,
                                               tenure_months=rec.tenure_months, fee_pct=prods[(e["bank"], rec.loan_type)].get("processing_fee_pct") or 0.0,
                                               min_fee=prods[(e["bank"], rec.loan_type)].get("min_fee") or 0.0,
                                               max_fee=prods[(e["bank"], rec.loan_type)].get("max_fee") or 0.0,
                                               flat_fee=prods[(e["bank"], rec.loan_type)].get("flat_fee") or 0.0,
                                               gst_pct=prods[(e["bank"], rec.loan_type)].get("gst_pct") or 0.0))
+                p = prods[(e["bank"], rec.loan_type)]
+                o = dict(o)
+                o["rate_is_starting_from"] = bool(p.get("rate_is_starting_from"))
+                o["fee_known"] = p.get("fee_known", True)
+                o["caveats"] = ([ "only a starting rate is published; your actual rate depends on your profile" ] if o["rate_is_starting_from"] else []) \
+                               + ([ "the processing fee is not published, so the total cost excludes it" ] if not o["fee_known"] else [])
+                o["source_url"], o["as_of_date"] = p.get("source_url", ""), p.get("as_of_date", "")
+                priced.append(o)
         rec.options = await self.tool(rec, "rank_options", options_json=json.dumps(priced), priority=priority) if priced else []
         return rec.options

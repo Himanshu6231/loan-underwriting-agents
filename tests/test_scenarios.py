@@ -3,6 +3,8 @@ os.environ["USE_LLM"] = "0"
 os.environ["MEMORY_DB"] = os.path.join(tempfile.mkdtemp(), "memory.db")
 os.environ["RUN_LOG"] = os.path.join(tempfile.mkdtemp(), "test_run_log.jsonl")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+# Tests use the fictional catalog so results are deterministic and offline; the demo uses the real one.
+os.environ["BANK_CATALOG"] = os.path.join(os.path.dirname(__file__), "..", "data", "banks.json")
 from agents.manager import UnderwritingManager
 from agents.document_agent import grounded, extract_fields
 
@@ -121,6 +123,7 @@ def test_real_catalog_loader_uses_verified_rows_only():
         w = csv.writer(f); w.writerow(cols); w.writerows([ok, bad, gap])
     prods, skipped = build(p, out)
     assert [x["bank"] for x in prods] == ["Test Bank"] and len(skipped) == 2     # unverified and incomplete rows are skipped
+    old = os.environ["BANK_CATALOG"]
     os.environ["BANK_CATALOG"] = out
     try:
         r = run("Applicant: Ravi Kumar. Net monthly income Rs 60,000. Requesting a loan of Rs 5,00,000 for 36 months.")
@@ -128,4 +131,42 @@ def test_real_catalog_loader_uses_verified_rows_only():
         assert r.options[0]["processing_fee"] == 5900.0                          # 1% = 5,000 (cap) + 18% GST
         assert "official bank websites" in r.catalog_note
     finally:
-        del os.environ["BANK_CATALOG"]
+        os.environ["BANK_CATALOG"] = old
+
+
+def test_unpublished_fields_are_flagged_not_invented():
+    import csv
+    from build_catalog import build
+    d = tempfile.mkdtemp()
+    cols = ["bank","loan_type","scheme","min_rate","max_rate","fee_pct","min_fee","max_fee","flat_fee","gst_pct","min_income",
+            "min_amount","max_amount","max_tenure_months","max_foir","source_url","as_of_date","verified","notes"]
+    row = ["Sparse Bank","home","","8","","","","","","18","","","","","","https://example.com","2026-11-26","yes",""]
+    p = os.path.join(d, "s.csv"); out = os.path.join(d, "s.json")
+    with open(p, "w", newline="") as f:
+        w = csv.writer(f); w.writerow(cols); w.writerow(row)
+    prods, skipped = build(p, out)
+    q = prods[0]
+    assert not skipped and q["rate_is_starting_from"] and not q["fee_known"] and not q["min_income_published"] and q["max_foir_is_assumption"]
+    old = os.environ["BANK_CATALOG"]
+    os.environ["BANK_CATALOG"] = out
+    try:
+        r = run("Applicant: Ravi Kumar. Net monthly income Rs 1,00,000. Requesting a home loan of Rs 20,00,000 for 15 years.")
+        o = r.options[0]
+        assert o["rate"] == 8 and o["processing_fee"] == 0 and len(o["caveats"]) == 2          # flagged, nothing made up
+        assert "starting rate" in r.advisory and "processing fee is not published" in r.advisory
+    finally:
+        os.environ["BANK_CATALOG"] = old
+
+
+def test_default_catalog_prefers_real_when_present():
+    import json
+    import agents.eligibility_agent as el
+    d = tempfile.mkdtemp()
+    full, empty = os.path.join(d, "full.json"), os.path.join(d, "empty.json")
+    json.dump({"products": [{"bank": "X"}]}, open(full, "w")); json.dump({"products": []}, open(empty, "w"))
+    old_env, old_real = os.environ.pop("BANK_CATALOG"), el.REAL
+    try:
+        el.REAL = full;  assert el._catalog_path() == full                      # real catalog present -> used
+        el.REAL = empty; assert el._catalog_path() == el.CATALOG                # empty -> fictional fallback
+    finally:
+        os.environ["BANK_CATALOG"] = old_env; el.REAL = old_real

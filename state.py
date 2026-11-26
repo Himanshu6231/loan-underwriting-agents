@@ -54,11 +54,18 @@ def print_trace(rec: ApplicantRecord) -> None:
         print("-" * 70)
         print(f"BANK OPTIONS - {rec.loan_type} loan ({rec.catalog_note})")
         for i, o in enumerate(rec.options, 1):
-            print(f"  {i}. {o['bank']:<22} {o['rate']:>5}%  EMI {o['emi']:>11,.2f}  fee {o['processing_fee']:>10,.2f}  total cost {o['total_cost']:>12,.2f}")
+            rate = f"{o['rate']}%" + ("*" if o.get("rate_is_starting_from") else "")
+            fee = f"{o['processing_fee']:,.2f}" if o.get("fee_known", True) else "n/a"
+            print(f"  {i}. {o['bank']:<22} {rate:>7}  EMI {o['emi']:>11,.2f}  fee {fee:>10}  total cost {o['total_cost']:>12,.2f}")
+        if any(o.get("rate_is_starting_from") for o in rec.options):
+            print("  * starting rate; the actual rate depends on the applicant's profile")
         for e in rec.eligibility:
             if not e["eligible"]:
                 print(f"  x  {e['bank']:<22} not eligible: {e['reasons'][0]}")
         print(f"ADVICE   : {rec.advisory}")
+        for o in rec.options:
+            if o.get("source_url"):
+                print(f"  source ({o['as_of_date']}): {o['bank']} - {o['source_url']}")
     if rec.counter_offer:
         c = rec.counter_offer
         t = c["min_tenure_for_requested_amount"]

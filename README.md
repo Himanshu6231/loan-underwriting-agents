@@ -47,12 +47,13 @@ After the underwriting decision, four more agents help the applicant choose a lo
 | Advisor Agent | Loan-type advice and a recommendation built only from the ranked facts | `loan_type_advice`, `build_advisory` |
 | Counter-Offer Agent | If affordability fails: the largest amount that would pass, and the shortest tenure that would pass | `max_affordable_amount`, `min_tenure_months` |
 
-Loan types: personal, home, car, education (detected from the application text; default personal). **The bank catalog (`data/banks.json`) is illustrative sample data with fictional banks, not live rates.** Replace it with figures from official bank websites for real use.
+Loan types: personal, home, car, education (detected from the application text; default personal). The default catalog is **`data/banks_real.json`**: indicative figures collected from banks' official websites on 26 Nov 2026 (HDFC, ICICI, Axis, Bank of Baroda and SBI), each product with its source link. `data/banks.json` is a fictional sample catalog used only as a fallback and for automated tests. Figures change, so always check the bank's website; this is not financial advice.
 
-## Using real bank data
-The default catalog (`data/banks.json`) is illustrative. To use real banks:
-1. Open `data/banks_real.csv`. For each product, open its `source_url` (the bank's official page), confirm or correct the figures, note the date in `as_of_date`, and set `verified` to `yes`.
-2. Run `python build_catalog.py`. Only verified, complete rows are written to `data/banks_real.json` (others are listed as skipped).
-3. Run with the real catalog: `BANK_CATALOG=data/banks_real.json python run_demo.py`. The output then says the figures are indicative and from official bank websites.
+## Real bank data: how it is built
+1. `data/banks_real.csv` holds one row per product, with the official `source_url`, the `as_of_date` and a `verified` flag.
+2. `python build_catalog.py` writes `data/banks_real.json` from the verified rows. A row needs at least a bank, loan type, starting rate, source link and date; rows missing those are listed as skipped.
+3. The system uses `data/banks_real.json` automatically when it has products (set `BANK_CATALOG=path` to choose another catalog).
 
-Fees support a percentage with a minimum and maximum, a flat amount, and GST. Where a bank does not publish an EMI-to-income limit, 50% is used and the product is marked `max_foir_is_assumption`. Figures are indicative; always check the bank's website.
+Fields a bank does not publish (minimum income, maximum tenure, processing fee, upper rate) are left empty and **flagged, not guessed**: a starting-only rate is shown with `*`, an unknown fee shows `n/a`, and the advice notes it. Where no EMI-to-income limit is published, 50% is used and the product is marked `max_foir_is_assumption`. Fees support a percentage with a minimum and maximum, a flat amount, and GST.
+
+Known limits: bank rates depend on the applicant's credit score and category (for example Axis home-loan rates apply to CIBIL 751+), while this project uses a simple credit band; SBI personal loans are not included because no current rate was found on an official page.
