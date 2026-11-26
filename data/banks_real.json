@@ -1,0 +1,46 @@
+{
+ "_label": "indicative figures from official bank websites, collected 2026-11-26; verify with the bank, not financial advice",
+ "_disclaimer": "Collected from official bank websites; rates and fees change. Each product lists its source_url and as_of_date. Where max_foir_is_assumption is true the EMI-to-income limit is a project assumption, not a published figure.",
+ "products": [
+  {
+   "bank": "HDFC Bank",
+   "loan_type": "personal",
+   "scheme": "Personal Loan (salaried)",
+   "min_rate": 9.99,
+   "max_rate": 24.0,
+   "processing_fee_pct": 0.0,
+   "min_fee": 0.0,
+   "max_fee": 0.0,
+   "flat_fee": 6500.0,
+   "gst_pct": 18.0,
+   "min_income": 25000.0,
+   "min_amount": 25000.0,
+   "max_amount": 4000000.0,
+   "max_tenure_months": 84,
+   "max_foir": 0.5,
+   "max_foir_is_assumption": true,
+   "source_url": "https://www.hdfc.bank.in/personal-loan",
+   "as_of_date": "2026-11-26"
+  },
+  {
+   "bank": "ICICI Bank",
+   "loan_type": "personal",
+   "scheme": "Personal Loan (salaried)",
+   "min_rate": 10.25,
+   "max_rate": 16.5,
+   "processing_fee_pct": 2.0,
+   "min_fee": 0.0,
+   "max_fee": 0.0,
+   "flat_fee": 0.0,
+   "gst_pct": 18.0,
+   "min_income": 30000.0,
+   "min_amount": 50000.0,
+   "max_amount": 5000000.0,
+   "max_tenure_months": 84,
+   "max_foir": 0.5,
+   "max_foir_is_assumption": true,
+   "source_url": "https://www.icici.bank.in/personal-banking/loans/personal-loan/personal-loan-interest-rates",
+   "as_of_date": "2026-11-26"
+  }
+ ]
+}

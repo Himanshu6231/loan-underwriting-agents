@@ -48,3 +48,11 @@ After the underwriting decision, four more agents help the applicant choose a lo
 | Counter-Offer Agent | If affordability fails: the largest amount that would pass, and the shortest tenure that would pass | `max_affordable_amount`, `min_tenure_months` |
 
 Loan types: personal, home, car, education (detected from the application text; default personal). **The bank catalog (`data/banks.json`) is illustrative sample data with fictional banks, not live rates.** Replace it with figures from official bank websites for real use.
+
+## Using real bank data
+The default catalog (`data/banks.json`) is illustrative. To use real banks:
+1. Open `data/banks_real.csv`. For each product, open its `source_url` (the bank's official page), confirm or correct the figures, note the date in `as_of_date`, and set `verified` to `yes`.
+2. Run `python build_catalog.py`. Only verified, complete rows are written to `data/banks_real.json` (others are listed as skipped).
+3. Run with the real catalog: `BANK_CATALOG=data/banks_real.json python run_demo.py`. The output then says the figures are indicative and from official bank websites.
+
+Fees support a percentage with a minimum and maximum, a flat amount, and GST. Where a bank does not publish an EMI-to-income limit, 50% is used and the product is marked `max_foir_is_assumption`. Figures are indicative; always check the bank's website.

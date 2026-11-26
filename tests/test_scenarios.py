@@ -96,3 +96,36 @@ def test_counter_offer_passes_the_affordability_rule():
     assert (compute_emi(amt, 10.5, 24) + 5000) / 30000 <= 0.40       # the suggested amount really passes
     m = min_tenure_months(300000, 30000, 5000, 10.5, 84)
     assert m and (compute_emi(300000, 10.5, m) + 5000) / 30000 <= 0.40 and (compute_emi(300000, 10.5, m - 1) + 5000) / 30000 > 0.40
+
+
+def test_fee_rules_flat_capped_and_gst():
+    from agents.comparison_agent import processing_fee
+    assert processing_fee(500000, 1.5, 1000, 15000) == 7500.0                 # plain percentage
+    assert processing_fee(2000000, 1.5, 1000, 15000) == 15000.0               # capped at max
+    assert processing_fee(10000, 1.5, 1000, 15000) == 1000.0                  # raised to min
+    assert processing_fee(500000, 0, flat_fee=6500) == 6500.0                 # flat
+    assert processing_fee(500000, 1.0, 0, 0, 0, 18) == 5900.0                 # GST on top
+
+
+def test_real_catalog_loader_uses_verified_rows_only():
+    import csv, json
+    from build_catalog import build
+    d = tempfile.mkdtemp()
+    cols = ["bank","loan_type","scheme","min_rate","max_rate","fee_pct","min_fee","max_fee","flat_fee","gst_pct","min_income",
+            "min_amount","max_amount","max_tenure_months","max_foir","source_url","as_of_date","verified","notes"]
+    ok = ["Test Bank","personal","","10","12","1","1000","5000","","18","20000","","","60","","https://example.com","2026-11-26","yes",""]
+    bad = ["Other Bank","personal","","9","11","1","","","","18","20000","","","60","","https://example.com","2026-11-26","no",""]
+    gap = ["Gap Bank","personal","","","","1","","","","18","20000","","","60","","https://example.com","2026-11-26","yes",""]
+    p = os.path.join(d, "t.csv"); out = os.path.join(d, "t.json")
+    with open(p, "w", newline="") as f:
+        w = csv.writer(f); w.writerow(cols); w.writerows([ok, bad, gap])
+    prods, skipped = build(p, out)
+    assert [x["bank"] for x in prods] == ["Test Bank"] and len(skipped) == 2     # unverified and incomplete rows are skipped
+    os.environ["BANK_CATALOG"] = out
+    try:
+        r = run("Applicant: Ravi Kumar. Net monthly income Rs 60,000. Requesting a loan of Rs 5,00,000 for 36 months.")
+        assert [o["bank"] for o in r.options] == ["Test Bank"]
+        assert r.options[0]["processing_fee"] == 5900.0                          # 1% = 5,000 (cap) + 18% GST
+        assert "official bank websites" in r.catalog_note
+    finally:
+        del os.environ["BANK_CATALOG"]

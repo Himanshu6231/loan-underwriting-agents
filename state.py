@@ -33,6 +33,7 @@ class ApplicantRecord:
     eligibility: list = field(default_factory=list)
     options: list = field(default_factory=list)
     advisory: str = ""
+    catalog_note: str = ""
     counter_offer: dict = field(default_factory=dict)
     trace: list = field(default_factory=list)
 
@@ -51,7 +52,7 @@ def print_trace(rec: ApplicantRecord) -> None:
     print(f"WHY      : {rec.justification}")
     if rec.eligibility:
         print("-" * 70)
-        print(f"BANK OPTIONS - {rec.loan_type} loan (illustrative sample data, not live rates)")
+        print(f"BANK OPTIONS - {rec.loan_type} loan ({rec.catalog_note})")
         for i, o in enumerate(rec.options, 1):
             print(f"  {i}. {o['bank']:<22} {o['rate']:>5}%  EMI {o['emi']:>11,.2f}  fee {o['processing_fee']:>10,.2f}  total cost {o['total_cost']:>12,.2f}")
         for e in rec.eligibility:

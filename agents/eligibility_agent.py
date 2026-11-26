@@ -7,9 +7,18 @@ from agents.emi_agent import compute_emi
 CATALOG = os.path.join(os.path.dirname(__file__), "..", "data", "banks.json")
 
 
+def _catalog_path():
+    return os.getenv("BANK_CATALOG", CATALOG)
+
+
 def _products():
-    with open(CATALOG, encoding="utf-8") as f:
+    with open(_catalog_path(), encoding="utf-8") as f:
         return json.load(f)["products"]
+
+
+def catalog_label() -> str:
+    with open(_catalog_path(), encoding="utf-8") as f:
+        return json.load(f).get("_label", "bank catalog")
 
 
 def list_banks(loan_type: str) -> list:
@@ -39,8 +48,9 @@ def check_eligibility(bank: str, loan_type: str, income: float, amount: float, t
         reasons.append("prior default on record")
     if income < p["min_income"]:
         reasons.append(f"income below minimum Rs {p['min_income']:,}")
-    if not p["min_amount"] <= amount <= p["max_amount"]:
-        reasons.append(f"amount outside Rs {p['min_amount']:,} - Rs {p['max_amount']:,}")
+    lo, hi, cap = p.get("min_amount", 0), p.get("max_amount", 10**10), p.get("max_foir", 0.5)
+    if not lo <= amount <= hi:
+        reasons.append(f"amount outside Rs {lo:,.0f} - Rs {hi:,.0f}")
     if tenure_months > p["max_tenure_months"]:
         reasons.append(f"tenure above maximum {p['max_tenure_months']} months")
     rate = pick_rate(p, band)
@@ -48,10 +58,10 @@ def check_eligibility(bank: str, loan_type: str, income: float, amount: float, t
     if rate and tenure_months > 0:
         emi = compute_emi(amount, rate, tenure_months)
         foir = round((emi + existing_emis) / income, 4)
-        if foir > p["max_foir"]:
-            reasons.append(f"EMI-to-income {foir:.0%} exceeds bank limit {p['max_foir']:.0%}")
+        if foir > cap:
+            reasons.append(f"EMI-to-income {foir:.0%} exceeds bank limit {cap:.0%}")
     return {"bank": bank, "eligible": not reasons, "reasons": reasons, "rate": rate, "emi": emi, "foir": foir,
-            "criteria": {"min_income": p["min_income"], "max_foir": p["max_foir"],
+            "criteria": {"min_income": p["min_income"], "max_foir": cap,
                          "max_tenure_months": p["max_tenure_months"]}}
 
 
@@ -81,6 +91,7 @@ class EligibilityAgent(BaseAgent):
         rec.credit_band = await self.tool(rec, "credit_band", defaults=h.get("defaults", 0),
                                           missed=h.get("missed_payments_12m", 0), past_declines=h.get("past_declines", 0))
         banks = await self.tool(rec, "list_banks", loan_type=rec.loan_type)
+        rec.catalog_note = catalog_label()
         rec.eligibility = []
         for b in banks:
             r = await self.tool(rec, "check_eligibility", bank=b, loan_type=rec.loan_type, income=rec.income,
